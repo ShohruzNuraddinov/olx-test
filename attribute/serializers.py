@@ -23,3 +23,21 @@ class AttributeSerializer(serializers.ModelSerializer):
             "is_list",
             "order",
         )
+
+
+class FilterAttributeSerializer(serializers.ModelSerializer):
+    options = AttributeOptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Attribute
+        fields = (
+            "id",
+            "title",
+            "image",
+            "options",
+            "type",
+            "filter_type",
+            "is_required",
+            "is_list",
+            "order",
+        )

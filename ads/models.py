@@ -1,8 +1,9 @@
 from django.db import models
 from utils.models import BaseModel
-
+from django.contrib.auth import get_user_model
 
 # Create your models here.
+User = get_user_model()
 
 
 class Category(BaseModel):
@@ -15,15 +16,21 @@ class Category(BaseModel):
 class SubCategory(BaseModel):
     title = models.CharField(max_length=255)
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="subcategory"
+    )
     attributes = models.ManyToManyField("attribute.Attribute", blank=True)
 
     ads_count = models.IntegerField(default=0)
 
 
+# class AdsImage(BaseModel):
+#     ads = models.ForeignKey("ads.Ads", on_delete=models.CASCADE, related_name="images")
+
+
 class Ads(BaseModel):
     title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to="ads/", null=True, blank=True)
+    image = models.ImageField(upload_to="ads_images")
     price = models.IntegerField(default=0)
     content = models.TextField()
 
@@ -31,7 +38,7 @@ class Ads(BaseModel):
         SubCategory, on_delete=models.CASCADE, related_name="sub_category"
     )
     district = models.ForeignKey("common.District", on_delete=models.CASCADE)
-
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_top = models.BooleanField(default=False)
 
     # EXTRA FIELDS

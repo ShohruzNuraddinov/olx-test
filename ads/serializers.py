@@ -1,17 +1,17 @@
 from rest_framework import serializers
 from ads import models
 from common.serializers import DistrictSerializer
-from attribute.serializers import AttributeOptionSerializer, AttributeSerializer
+from attribute.serializers import (
+    AttributeOptionSerializer,
+    AttributeSerializer,
+    FilterAttributeSerializer,
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
-        fields = (
-            "id",
-            "title",
-            "ads_count",
-        )
+        fields = ("id", "title", "ads_count", "image")
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
@@ -25,6 +25,22 @@ class SubCategorySerializer(serializers.ModelSerializer):
             "category",
             "ads_count",
         )
+
+
+class FilterSubCategorySerializer(serializers.ModelSerializer):
+    attributes = FilterAttributeSerializer(many=True)
+
+    class Meta:
+        model = models.SubCategory
+        fields = ("id", "title", "ads_count", "attributes")
+
+
+class FilterCategorySerializer(serializers.ModelSerializer):
+    subcategory = FilterSubCategorySerializer(many=True)
+
+    class Meta:
+        model = models.Category
+        fields = ("id", "title", "ads_count", "image", "subcategory")
 
 
 class AdsAttributeValueOption(serializers.ModelSerializer):
