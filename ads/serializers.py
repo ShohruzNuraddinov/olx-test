@@ -7,6 +7,8 @@ from attribute.serializers import (
     FilterAttributeSerializer,
 )
 
+from attribute.models import Attribute, AttributeOption
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,6 +56,12 @@ class AdsAttributeValueOption(serializers.ModelSerializer):
         )
 
 
+class AdsAttributeValueOptionCreateSerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AdsAttributeValueOption
+        fields = '__all__'
+
+
 class AdsAttributeValueSerializer(serializers.ModelSerializer):
     value_options = AdsAttributeValueOption(many=True)
     attribute = AttributeSerializer()
@@ -61,6 +69,12 @@ class AdsAttributeValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AdsAttributeValue
         fields = ("id", "attribute", "value_options", "value")
+
+
+class AdsAttributeValueCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AdsAttributeValue
+        fields = ['id', 'attribute', 'ads', 'value']
 
 
 class AdsSerializer(serializers.ModelSerializer):
@@ -82,3 +96,48 @@ class AdsSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+
+
+class AdsCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Ads
+        fields = [
+            'id',
+            'title',
+            'image',
+            'content',
+            'price',
+            'district',
+            'is_top',
+            'is_vip',
+            'address',
+            'sub_category',
+            'created_at',
+            'updated_at',
+        ]
+
+
+class VipAdsSerailizer(serializers.ModelSerializer):
+    class Meta:
+        mdoel = models.Ads
+        fields = [
+            'id',
+            'title',
+            'is_vip',
+            'is_top',
+            'image',
+        ]
+
+
+class FilterAttributeValueSerailizer(serializers.ModelSerializer):
+    attribute = AttributeSerializer(many=False)
+    ads = AdsSerializer()
+
+    class Meta:
+        model = models.AdsAttributeValue
+        fields = [
+            'id',
+            'value',
+            'attribute',
+            'ads',
+        ]

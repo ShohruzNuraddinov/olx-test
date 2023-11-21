@@ -21,6 +21,8 @@ class AttributeSerializer(serializers.ModelSerializer):
             "type",
             "is_required",
             "is_list",
+            "is_filter",
+            'filter_type',
             "order",
         )
 
