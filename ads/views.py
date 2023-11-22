@@ -53,20 +53,6 @@ class FilterCategoryListView(generics.ListAPIView):
     )
     serializer_class = FilterCategorySerializer
 
-    # def get(self, request):
-    # queryset = Category.objects.all().prefetch_related(
-    #     Prefetch(
-    #         'subcategory',
-    #         queryset=SubCategory.objects.all().prefetch_related(
-    #             'attributes',
-    #             queryset=Attribute.objects.all().prefetch_related(
-    #                 ''
-    #             )
-    #         )
-    #     )
-    # )
-    # return
-
 
 class FilterAdsListView(generics.ListAPIView):
     queryset = Ads.objects.all()

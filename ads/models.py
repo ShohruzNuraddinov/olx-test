@@ -69,24 +69,20 @@ class Ads(BaseModel):
         return f"{self.district.region.title}, {self.district.title}"
 
     class Meta:
-        triggers = [
-            pgtrigger.Trigger(
-                name='address_set',
-                operation=pgtrigger.Update | pgtrigger.Insert,
-                when=pgtrigger.Before,
-                func=f"""
-                    NEW.address = (SELECT CONCAT(common_region.title, ', ', common_district.title) FROM common_district JOIN common_region ON common_district.region_id=common_region.id WHERE common_district.id=NEW.district_id);RETURN NEW; 
-                """,
-            ),
-            # pgtrigger.Trigger(
-            #     name='ads_count',
-            #     operation=pgtrigger.Insert,
-            #     when=pgtrigger.Before,
-            #     func=f"""
-            #         NEW.sub_category_id
-            #         """
-            # )
-        ]
+        verbose_name_plural = "Ads"
+        ordering = ('id',)
+
+    # class Meta:
+    #     triggers = [
+    #         pgtrigger.Trigger(
+    #             name='address_set',
+    #             operation=pgtrigger.Update | pgtrigger.Insert,
+    #             when=pgtrigger.Before,
+    #             func=f"""
+    #                 NEW.address = (SELECT CONCAT(common_region.title, ', ', common_district.title) FROM common_district JOIN common_region ON common_district.region_id=common_region.id WHERE common_district.id=NEW.district_id);RETURN NEW;
+    #             """,
+    #         ),
+    #     ]
 
 
 class AdsAttributeValue(BaseModel):
@@ -96,7 +92,11 @@ class AdsAttributeValue(BaseModel):
         Ads, on_delete=models.CASCADE, related_name="attribute_values"
     )
     attribute = models.ForeignKey(
-        "attribute.Attribute", on_delete=models.CASCADE)
+        "attribute.Attribute", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name_plural = 'Ads Attribute Value'
 
 
 class AdsAttributeValueOption(BaseModel):
