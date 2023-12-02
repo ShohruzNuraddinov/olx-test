@@ -114,7 +114,7 @@ class AdsAdmin(admin.ModelAdmin):
         form = CSVImortForm()
         payload = {"form": form}
         return render(
-            request, "admin/csv_form.html", payload
+            request, "entities/csv_form.html", payload
         )
 
 

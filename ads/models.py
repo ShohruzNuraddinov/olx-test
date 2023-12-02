@@ -3,9 +3,16 @@ import pgtrigger
 from django.db import models
 from utils.models import BaseModel
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 # Create your models here.
 User = get_user_model()
+
+
+class languageChoice(models.Choices):
+    uz = "UZ"
+    en = "EN"
+    ru = "RU"
 
 
 class Category(BaseModel):
@@ -61,6 +68,9 @@ class Ads(BaseModel):
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_top = models.BooleanField(default=False)
     is_vip = models.BooleanField(default=False)
+
+    language = models.CharField(
+        max_length=10, choices=settings.LANGUAGES)
 
     # EXTRA FIELDS
     address = models.CharField(max_length=255, null=True, blank=True)

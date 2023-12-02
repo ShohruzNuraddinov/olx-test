@@ -6,6 +6,9 @@ from attribute.serializers import (
     AttributeSerializer,
     FilterAttributeSerializer,
 )
+from django.utils.translation import gettext as _
+from rest_framework.validators import ValidationError
+from rest_framework.response import Response
 
 from attribute.models import Attribute, AttributeOption
 
@@ -14,6 +17,14 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
         fields = ("id", "title", "ads_count", "image")
+
+    def validate(self, attrs):
+        # print(attrs)
+        if len(attrs['title']) < 3:
+            raise serializers.ValidationError(
+                {'message': _("write at least 3 letters!")}
+            )
+        return attrs
 
 
 class SubCategorySerializer(serializers.ModelSerializer):

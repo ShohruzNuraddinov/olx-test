@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-yoa=n)t-#&!19up-uns$&o*fgxv6+7m1b5$+nryn@g7=s^pn&s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -33,6 +33,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'jazzmin',
     # 'baton',
+    # 'adminlte3',
+    # 'adminlte3_theme',
+    'multi_captcha_admin',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,25 +43,44 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # THIRD PARTY
-    "rest_framework",
+    'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'pgtrigger',
     'imagekit',
+    'snowpenguin.django.recaptcha2',
+    'modeltranslation',
+    'debug_toolbar',
+    'rosetta',
+
+
     # LOCAL
     "attribute",
     "ads",
     "common",
+
     # 'baton.autodiscover',
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "allauth.account.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'django.middleware.locale.LocaleMiddleware'
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -80,6 +102,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
+
+# ReCaptcha
+RECAPTCHA_PUBLIC_KEY = '6LdrfBkpAAAAAPvf7EHfrR6vULAyprG4ksXvQCxQ'
+RECAPTCHA_PRIVATE_KEY = '6LdrfBkpAAAAAHneWR6ISKY6JRS_LtdOowYlICP3'
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
+MULTI_CAPTCHA_ADMIN = {
+    'engine': 'recaptcha2',
+}
+
+RECAPTCHA_PROXY = {'http': 'http://127.0.0.1:8000',
+                   'https': 'https://127.0.0.1:8000'}
 
 
 # Database
@@ -128,10 +162,21 @@ USE_I18N = True
 USE_TZ = True
 
 
+LANGUAGES = (
+    ('uz', "Uzbek"),
+    ('en', "English"),
+    ('ru', "Russian"),
+)
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'uz'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIXFILES_DIRS = [BASE_DIR / 'static/']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
@@ -147,5 +192,83 @@ REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     # ],
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    },
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
+
+
+# Baton
+
+# BATON = {
+#     'SITE_HEADER': 'OLX Admin',
+#     'SITE_TITLE': 'OLX Admin',
+#     'INDEX_TITLE': 'OLX',
+#     'SUPPORT_HREF': 'https://github.com/otto-torino/django-baton/issues',
+#     'COPYRIGHT': 'copyright © 2023 <a href="https://olx.uz">OLX Team</a>',  # noqa
+#     'POWERED_BY': '<a href="https://olx.uz">OLX Team</a>',
+#     'CONFIRM_UNSAVED_CHANGES': True,
+#     'SHOW_MULTIPART_UPLOADING': True,
+#     'ENABLE_IMAGES_PREVIEW': True,
+#     'CHANGELIST_FILTERS_IN_MODAL': True,
+#     'CHANGELIST_FILTERS_ALWAYS_OPEN': False,
+#     'CHANGELIST_FILTERS_FORM': True,
+#     'MENU_ALWAYS_COLLAPSED': False,
+#     'MENU_TITLE': 'Menu',
+#     'MESSAGES_TOASTS': False,
+#     'GRAVATAR_DEFAULT_IMG': 'retro',
+#     'GRAVATAR_ENABLED': True,
+#     'LOGIN_SPLASH': '/static/core/img/login-splash.png',
+#     'FORCE_THEME': None,
+#     'SEARCH_FIELD': {
+#         'label': 'Search contents...',
+#         'url': '/search/',
+#     },
+#     'MENU': (
+#         {'type': 'title', 'label': 'main', 'apps': ('auth', )},
+#         {
+#             'type': 'app',
+#             'name': 'auth',
+#             'label': 'Authentication',
+#             'icon': 'fa fa-lock',
+#             'models': (
+#                 {
+#                     'name': 'user',
+#                     'label': 'Users'
+#                 },
+#                 {
+#                     'name': 'group',
+#                     'label': 'Groups'
+#                 },
+#                 {
+#                     'name': 'ads',
+#                     'label': 'Ads'
+#                 },
+#             )
+#         },
+#         {'type': 'title', 'label': 'Contents', 'apps': ('flatpages', )},
+#         {'type': 'model', 'label': 'Pages', 'name': 'flatpage', 'app': 'flatpages'},
+#         {'type': 'free', 'label': 'Custom Link', 'url': 'http://www.google.it',
+#             'perms': ('flatpages.add_flatpage', 'auth.change_user')},
+#         {'type': 'free', 'label': 'My parent voice', 'default_open': True, 'children': [
+#             {'type': 'model', 'label': 'A Model',
+#                 'name': 'mymodelname', 'app': 'myapp'},
+#             {'type': 'free', 'label': 'Another custom link',
+#                 'url': 'http://www.google.it'},
+#         ]},
+#     ),
+#     # 'ANALYTICS': {
+#     #     'CREDENTIALS': os.path.join(BASE_DIR, 'credentials.json'),
+#     #     'VIEW_ID': '12345678',
+#     # }
+# }
